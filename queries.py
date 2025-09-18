@@ -433,12 +433,16 @@ def f14():
     con = sqlite3.connect("ursei.db")
     curs = con.cursor()
 
+    # Получаем максимальный ID
+    curs.execute('''SELECT MAX(id) FROM student''')
+    max_id = curs.fetchone()[0]
+    
+    # Выбираем 3 последние записи по ID (без сортировки в запросе)
     curs.execute('''SELECT 
                  id, 
                  surname
                  FROM student
-                 ORDER BY id DESC
-                 LIMIT 3''')
+                 WHERE id >= ?''', (max_id - 2,))
     
     col_names = [cn[0] for cn in curs.description]
     rows = curs.fetchall()
